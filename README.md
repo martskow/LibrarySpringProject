@@ -1,0 +1,2 @@
+This repository contains the Management System project library in Java Spring. The previous repository is located at https://github.com/martskow/Library. Unfortunately, due to my inattention, I mixed up the files in that repository and had to create new ones. I leave them as confirmation of the submission of lists 2, 3 and 4.
+Link to Postman, where are most of the available endpoints: https://www.postman.com/martskow/workspace/library.
