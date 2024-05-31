@@ -52,7 +52,7 @@ public class JWTTokenFilter extends OncePerRequestFilter {
                     .parseSignedClaims(token)
                     .getPayload();
             String userId = claims.get("id").toString(); // to będzie zapisane w tokenie przy
-            String role = claims.get("role").toString(); //tworzeniu
+            String role = claims.get("role").toString(); // tworzeniu
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userId, null, List.of(new SimpleGrantedAuthority(role))
