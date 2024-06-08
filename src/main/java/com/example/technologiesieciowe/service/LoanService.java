@@ -78,11 +78,14 @@ public class LoanService {
      * @throws NotAvailableCopiesException If the book is not available for loan.
      */
     public LoanEntity addLoan(LoanEntity loan) {
-        if (loan.getBook() == null || loan.getBook().getId() == null) {
-            throw FieldRequiredException.create("Book ID");
-        } else if (loan.getUser() == null || loan.getUser().getUserId() == null) {
-            throw FieldRequiredException.create("User ID");
+        if (loan.getBook() == null || loan.getBook().getIsbn() == null) {
+            throw FieldRequiredException.create("Book isbn");
+        } else if (loan.getUser() == null || loan.getUser().getUserName() == null) {
+            throw FieldRequiredException.create("Username");
         }
+
+        loan.getUser().setUserId(userRepository.getByUserName(loan.getUser().getUserName()).getUserId());
+        loan.getBook().setId(bookRepository.getByIsbn(loan.getBook().getIsbn()).getId());
 
         if (loan.getLoanDate() == null) {
             loan.setLoanDate(LocalDate.now().toString());
