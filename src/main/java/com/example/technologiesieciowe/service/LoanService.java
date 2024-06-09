@@ -160,20 +160,22 @@ public class LoanService {
     /**
      * Processes the return of a loan.
      * @param loanId The ID of the loan to return.
-     * @param endedLoan The loan entity containing the return date.
      * @throws LoanNotFoundException If the loan with the specified ID is not found.
      * @throws BookNotFoundException If the book associated with the loan is not found.
      */
-    public void returnBook(Integer loanId, LoanEntity endedLoan) {
+    public void returnBook(Integer loanId) {
         LoanEntity loanToEdit = loanRepository.findById(loanId)
                 .orElseThrow(() -> LoanNotFoundException.create(loanId.toString()));
 
         LoanArchiveEntity archivalLoan = new LoanArchiveEntity();
-        if (endedLoan.getReturnDate() == null) {
-            archivalLoan.setReturnDate(LocalDate.now().toString());
-        } else {
-            archivalLoan.setReturnDate(endedLoan.getReturnDate());
-        }
+        Optional<LoanEntity> endedLoan = loanRepository.findById(loanId);
+
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(formatter);
+
+        archivalLoan.setReturnDate(formattedDate);
+
         archivalLoan.setBook(loanToEdit.getBook());
         archivalLoan.setUser(loanToEdit.getUser());
         archivalLoan.setLoanDate(loanToEdit.getLoanDate());

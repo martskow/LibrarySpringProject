@@ -81,12 +81,11 @@ public class LoanController {
     /**
      * Endpoint for returning a book associated with a loan.
      * @param id The ID of the loan to return.
-     * @param editedLoan The LoanEntity object of the returned loan.
      */
     @PutMapping("/returnBook/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public void returnLoan(@PathVariable Integer id, @RequestBody LoanEntity editedLoan) {
-        loanService.returnBook(id, editedLoan);
+    public void returnLoan(@PathVariable Integer id) {
+        loanService.returnBook(id);
     }
 
     /**

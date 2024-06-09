@@ -84,6 +84,9 @@ public class SecurityConfig {
                                         .requestMatchers("/bookDetails/getOne/{id}").hasAnyRole("ADMIN", "LIBRARIAN")
                                         .requestMatchers("/bookDetails/getByGenre/{genre}").hasAnyRole("ADMIN", "LIBRARIAN")
                                         .requestMatchers("/bookDetails/getListByGenre/{genre}").hasAnyRole("ADMIN", "LIBRARIAN", "USER")
+                                        .requestMatchers("/user/getUserRole").permitAll()
+                                        .requestMatchers("/user/getUserId").permitAll()
+                                        .requestMatchers("/user/getUserStats/{id}").hasAnyRole("ADMIN", "LIBRARIAN", "USER")
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -176,5 +178,27 @@ public class UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    public Map<String, Integer> userStats (Integer userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> UserNotFoundException.create(userId.toString()));
+
+        String loggedInUsername = LoginService.getLoggedInUserId();
+        String loggedInUserRole = LoginService.getLoggedInUserRole();
+        if (!(loggedInUserRole.equals("ROLE_ADMIN") || (userId.toString().equals(loggedInUsername)))) {
+            throw UserAccessDeniedException.create("You are not allowed to get this user information.");
+        }
+
+        Map<String, Integer> stats = new HashMap<>();
+        Integer borrowedBooks = user.getLoans().size() + user.getArchiveLoans().size();
+        Integer reviews = user.getReviews().size();
+        Integer nowReading = user.getLoans().size();
+        Integer inQueue = user.getQueues().size();
+        stats.put("Borrowed books", borrowedBooks);
+        stats.put("Reviews", reviews);
+        stats.put("Now reading", nowReading);
+        stats.put("In queue", inQueue);
+        return stats;
     }
 }

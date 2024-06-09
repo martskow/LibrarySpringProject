@@ -3,11 +3,23 @@ package com.example.technologiesieciowe.controllers;
 import com.example.technologiesieciowe.infrastructure.entity.ReviewEntity;
 import com.example.technologiesieciowe.infrastructure.entity.UserEntity;
 import com.example.technologiesieciowe.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Controller class for handling user-related HTTP requests.
@@ -93,5 +105,34 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     public UserEntity editPassword(@PathVariable Integer id, @RequestBody UserEntity user) {
         return userService.newUserPassword(id, user);
+    }
+
+    @GetMapping("/getUserRole")
+    @ResponseStatus(code = HttpStatus.OK)
+    public String getUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+                if (!authorities.isEmpty()) {
+                    return authorities.iterator().next().getAuthority();
+                }
+            }
+            return null;
+    }
+
+    @GetMapping("/getUserId")
+    @ResponseStatus(code = HttpStatus.OK)
+    public String getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName().toString();
+        }
+        return null;
+    }
+
+    @GetMapping("/getUserStats/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public Map<String, Integer> userStats(@PathVariable Integer id) {
+        return userService.userStats(id);
     }
 }
