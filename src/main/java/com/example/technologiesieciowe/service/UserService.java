@@ -124,27 +124,29 @@ public class UserService {
         String newFirstName = editedUser.getUserFirstName();
         String newLastName = editedUser.getUserLastName();
 
-        if (newUserName != null) {
-            Optional<UserEntity> existingUser = Optional.ofNullable(userRepository.getByUserName(editedUser.getUserName()));
+        if (newUserName != null && !newUserName.equals(userToEdit.getUserName())) {
+            Optional<UserEntity> existingUser = Optional.ofNullable(userRepository.getByUserName(newUserName));
             if (existingUser.isPresent()) {
-                throw UserAlreadyExistsException.create(userToEdit.getUserName());
+                throw UserAlreadyExistsException.create(newUserName);
             } else {
                 userToEdit.setUserName(newUserName);
             }
-
         }
-        if (newEmail != null) {
-            Optional<UserEntity> existingEmail = Optional.ofNullable(userRepository.getByEmail(editedUser.getEmail()));
+
+        if (newEmail != null && !newEmail.equals(userToEdit.getEmail())) {
+            Optional<UserEntity> existingEmail = Optional.ofNullable(userRepository.getByEmail(newEmail));
             if (existingEmail.isPresent()) {
-                throw UserEmailExistsException.create(userToEdit.getEmail());
+                throw UserEmailExistsException.create(newEmail);
             } else {
                 userToEdit.setEmail(newEmail);
             }
         }
-        if (newFirstName != null) {
+
+        if (newFirstName != null && !newFirstName.equals(userToEdit.getUserFirstName())) {
             userToEdit.setUserFirstName(newFirstName);
         }
-        if (newLastName != null) {
+
+        if (newLastName != null && !newLastName.equals(userToEdit.getUserLastName())) {
             userToEdit.setUserLastName(newLastName);
         }
 

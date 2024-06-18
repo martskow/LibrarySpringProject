@@ -2,6 +2,7 @@ package com.example.technologiesieciowe.security;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,24 +45,25 @@ public class JWTTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String headerAuth = request.getHeader((HttpHeaders.AUTHORIZATION));
-        if(headerAuth!=null && headerAuth.startsWith("Bearer")) {
-            String token = headerAuth.split(" ")[1];
-            Claims claims = Jwts.parser()
-                    .setSigningKey(key)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-            String userId = claims.get("id").toString(); // to będzie zapisane w tokenie przy
-            String role = claims.get("role").toString(); // tworzeniu
+            if(headerAuth!=null && headerAuth.startsWith("Bearer")) {
+                String token = headerAuth.split(" ")[1];
+                Claims claims = Jwts.parser()
+                        .setSigningKey(key)
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
+                String userId = claims.get("id").toString(); // to będzie zapisane w tokenie przy
+                String role = claims.get("role").toString(); // tworzeniu
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userId, null, List.of(new SimpleGrantedAuthority(role))
-            );
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userId, null, List.of(new SimpleGrantedAuthority(role))
+                );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            SecurityContextHolder.getContext().setAuthentication(null);
-        }
-        filterChain.doFilter(request, response);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                SecurityContextHolder.getContext().setAuthentication(null);
+            }
+            filterChain.doFilter(request, response);
+
     }
 }
